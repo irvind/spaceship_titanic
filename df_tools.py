@@ -98,9 +98,8 @@ def transform_price_columns(df):
 
 
 def dataset_to_np_array(df, with_y=True):
-    df2 = df[['CryoSleep', 'Age', 'VIP', 'RoomService', 'GroupSize']]
-    for col in ('CryoSleep', 'VIP'):
-        df2[col] = df2[col].astype(int)
+    df2 = df[['CryoSleep', 'Age', 'RoomService', 'GroupSize']]
+    df2['CryoSleep'] = df2['CryoSleep'].astype(int)
 
     X_cat = df[['HomePlanet', 'Destination', 'Deck', 'Side']].values
     one_hot_encoder = OneHotEncoder(categories='auto', drop='first')
@@ -111,14 +110,12 @@ def dataset_to_np_array(df, with_y=True):
         ('Side_onehot', one_hot_encoder, [3]),
     ])
     X_cat_transformed = col_transformer.fit_transform(X_cat).toarray()
-    # print(X_cat_transformed.shape)
-    # X_cat_transformed
     # for i in range(4):
     #     print(col_transformer.transformers_[i][1].categories_)
 
     X_regular = df2.values
     X = np.hstack((X_regular, X_cat_transformed))
-    # print(X.shape)
+    # X = X_regular
     if with_y:
         y = df['Transported'].astype(int).values
         return X, y
